@@ -4,5 +4,8 @@ homepage = "http://www.netlib.org/ode/rkf45.f"
 license = "Public Domain"
 description = "Fehlberg fourth-fifth order Runge-Kutta method"
 keywords = ["ODE", "Runge-Kutta", "Fehlberg", "fourth-fifth order"]
-maintainers = "rkf45 contributors"
-category = "solver"
+maintainer = "rkf45 contributors"
+categories = "solver"
+
+[dev-dependencies]
+test-drive = { git="https://github.com/fortran-lang/test-drive" }
