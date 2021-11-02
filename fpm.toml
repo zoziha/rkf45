@@ -1,2 +1,8 @@
 name = "rkf45"
+version = "0.0.1"
 homepage = "http://www.netlib.org/ode/rkf45.f"
+license = "Public Domain"
+description = "Fehlberg fourth-fifth order Runge-Kutta method"
+keywords = ["ODE", "Runge-Kutta", "Fehlberg", "fourth-fifth order"]
+maintainers = "rkf45 contributors"
+category = "solver"

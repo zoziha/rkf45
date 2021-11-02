@@ -225,8 +225,6 @@ subroutine rkfs(f, neqn, y, t, tout, relerr, abserr, iflag, yp, h, f1, f2, f3, f
 
     integer k, maxnfe, mflag
 
-    ! real abs, amax1, amin1, r1mach, sign
-
     !  remin is the minimum acceptable value of relerr.  attempts
     !  to obtain higher accuracy with this subroutine are usually
     !  very expensive and often unsuccessful.
@@ -244,8 +242,6 @@ subroutine rkfs(f, neqn, y, t, tout, relerr, abserr, iflag, yp, h, f1, f2, f3, f
     !   to 26 times the machine epsilon
 
     data twoeps, u26/4.4e-16, 5.72e-15/
-    ! twoeps = 2.*epsilon(1.0)
-    ! u26 = 13.*twoeps
 
     !     check input parameters
 
@@ -349,7 +345,7 @@ subroutine rkfs(f, neqn, y, t, tout, relerr, abserr, iflag, yp, h, f1, f2, f3, f
         if (ypk*h**5 > tol) h = (tol/ypk)**0.2e0
 70  end do
     if (toln <= 0.0e0) h = 0.0e0
-    h = amax1(h, u26*amax1(abs(t), abs(dt)))
+    h = max(h, u26*max(abs(t), abs(dt)))
     jflag = isign(2, iflag)
 
     !     set stepsize for integration in the direction from t to tout
@@ -466,7 +462,7 @@ subroutine rkfs(f, neqn, y, t, tout, relerr, abserr, iflag, yp, h, f1, f2, f3, f
         return
 
 240     ee = abs((-2090.0e0*yp(k) + (21970.0e0*f3(k) - 15048.0e0*f4(k))) + (22528.0e0*f2(k) - 27360.0e0*f5(k)))
-        eeoet = amax1(eeoet, ee/et)
+        eeoet = max(eeoet, ee/et)
     end do
 
     esttol = abs(h)*eeoet*scale/752400.0e0
@@ -508,8 +504,8 @@ subroutine rkfs(f, neqn, y, t, tout, relerr, abserr, iflag, yp, h, f1, f2, f3, f
 
     s = 5.0e0
     if (esttol > 1.889568e-4) s = 0.9e0/esttol**0.2e0
-    if (hfaild) s = amin1(s, 1.0e0)
-    h = sign(amax1(s*abs(h), hmin), h)
+    if (hfaild) s = min(s, 1.0e0)
+    h = sign(max(s*abs(h), hmin), h)
 
     !     end of core integrator
 
