@@ -9,7 +9,7 @@
 |Website:|http://www.netlib.org/ode/rkf45.f|
 |License:|Public Domain|
 
-## Get start
+## Get started
 
 ### Dependencies
 
@@ -32,11 +32,11 @@ You can build `rkf45` using provided `fpm.toml`:
 fpm build --profile release
 ```
 
-To sue `rkf45` within your `fpm` project, add the following to your `fpm.toml` file:
+To use `rkf45` within your `fpm` project, add the following to your `fpm.toml` file:
 
 ```toml
 [dependencies]
-rkf45 = { git=https://github.com/zoziha/rkf45.git }
+rkf45 = { git="https://github.com/zoziha/rkf45" }
 ```
 
 ## Links
@@ -44,3 +44,4 @@ rkf45 = { git=https://github.com/zoziha/rkf45.git }
 - [netlib/rkf45](http://www.netlib.org/ode/rkf45.f)
 - [John Burkardt/rkf45(Fixed Format)](https://people.math.sc.edu/Burkardt/f77_src/rkf45/rkf45.html)
 - [John Burkardt/rkf45(Free Format)](https://people.math.sc.edu/Burkardt/f_src/rkf45/rkf45.html)
+- [jacobwilliams/rksuite](https://github.com/jacobwilliams/rksuite)

@@ -283,7 +283,7 @@ contains
 
         if (neqn < 1) goto 10
         if ((relerr < 0.0e0) .or. (abserr < 0.0e0)) goto 10
-        mflag = iabs(iflag)
+        mflag = abs(iflag)
         if ((mflag >= 1) .and. (mflag <= 8)) goto 20
 
         !     invalid input
@@ -321,7 +321,7 @@ contains
 
         !     reset flag value from previous call
 45      iflag = jflag
-        if (kflag == 3) mflag = iabs(iflag)
+        if (kflag == 3) mflag = abs(iflag)
 
         !     save input iflag and set continuation flag value for subsequent
         !     input checking
