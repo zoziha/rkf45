@@ -50,7 +50,7 @@ contains
     contains
 
         !> Evaluates the derivative for the ODE
-        pure subroutine fcn(t, y, yp)
+        subroutine fcn(t, y, yp)
             real(rk), intent(in) :: t
             real(rk), intent(in) :: y(:)
             real(rk), intent(out) :: yp(:)
@@ -60,7 +60,7 @@ contains
         end subroutine fcn
 
         !> Exact solution
-        pure real(rk) function fx(t)
+        real(rk) function fx(t)
             real(rk), intent(in) :: t
 
             fx = sqrt(1 + 2*t)

@@ -9,7 +9,7 @@ module rkf45_module
     abstract interface
 
         !> `fcn` evaluates the derivative for the ODE.
-        pure subroutine fcn(t, y, yp)
+        subroutine fcn(t, y, yp)
             import rk
             real(rk), intent(in) :: t
             real(rk), intent(in) :: y(:)
@@ -202,7 +202,7 @@ contains
 
         procedure(fcn) :: f
 
-        integer k1, k2, k3, k4, k5, k6, k1m
+        integer :: k1, k2, k3, k4, k5, k6, k1m
 
         !     compute indices for the splitting of the work array
 
@@ -243,7 +243,7 @@ contains
         !         h  - an appropriate stepsize to be used for the next step
         !         nfe- counter on the number of derivative function evaluations
 
-        logical hfaild, output
+        logical :: hfaild, output
 
         integer, intent(in) :: neqn
         real(rk), intent(inout) :: y(neqn)
@@ -259,13 +259,13 @@ contains
 
         real(rk) a, ae, dt, ee, eeoet, esttol, et, hmin, remin, rer, s, scale, tol, toln, twoeps, u26, ypk
 
-        integer k, maxnfe, mflag
+        integer :: k, maxnfe, mflag
 
         !  remin is the minimum acceptable value of relerr.  attempts
         !  to obtain higher accuracy with this subroutine are usually
         !  very expensive and often unsuccessful.
 
-        data remin/1.e-12/
+        data remin/1.e-12_rk/
 
         !     the expense is controlled by restricting the number
         !     of function evaluations to be approximately maxnfe.
@@ -279,10 +279,8 @@ contains
 
         data twoeps, u26/4.4e-16, 5.72e-15/
 
-        !     check input parameters
-
-        if (neqn < 1) goto 10
-        if ((relerr < 0.0e0) .or. (abserr < 0.0e0)) goto 10
+        !> Check input parameters
+        if (neqn < 1 .or. relerr < 0.0_rk .or. abserr < 0.0_rk) goto 10
         mflag = abs(iflag)
         if ((mflag >= 1) .and. (mflag <= 8)) goto 20
 
@@ -302,14 +300,14 @@ contains
         if (kflag == 3) goto 45
         if (init == 0) goto 45
         if (kflag == 4) goto 40
-        if ((kflag == 5) .and. (abserr == 0.0e0)) goto 30
+        if ((kflag == 5) .and. (abserr == 0.0_rk)) goto 30
         if ((kflag == 6) .and. (relerr <= savre) .and. (abserr <= savae)) goto 30
         goto 50
 
         !     iflag = 3,4,5,6,7 or 8
 25      if (iflag == 3) goto 45
         if (iflag == 4) goto 40
-        if ((iflag == 5) .and. (abserr > 0.0e0)) goto 45
+        if ((iflag == 5) .and. (abserr > 0.0_rk)) goto 45
 
         !     integration cannot be continued since user did not respond to
         !     the instructions pertaining to iflag=5,6,7 or 8
@@ -378,9 +376,9 @@ contains
             if (tol <= 0.) goto 70
             toln = tol
             ypk = abs(yp(k))
-            if (ypk*h**5 > tol) h = (tol/ypk)**0.2e0
+            if (ypk*h**5 > tol) h = (tol/ypk)**0.2_rk
 70      end do
-        if (toln <= 0.0e0) h = 0.0e0
+        if (toln <= 0.0_rk) h = 0.0_rk
         h = max(h, u26*max(abs(t), abs(dt)))
         jflag = sign(2, iflag)
 
@@ -391,7 +389,7 @@ contains
         !     test to see if rkf45 is being severely impacted by too many
         !     output points
 
-        if (abs(h) >= 2.0e0*abs(dt)) kop = kop + 1
+        if (abs(h) >= 2.0_rk*abs(dt)) kop = kop + 1
         if (kop /= 100) goto 85
 
         !     unnecessary frequency of output
@@ -418,7 +416,7 @@ contains
         !     to avoid premature underflow in the error tolerance function,
         !     scale the error tolerances
 
-        scale = 2.0e0/relerr
+        scale = 2.0_rk/relerr
         ae = scale*abserr
 
         !     step by step integration
@@ -434,7 +432,7 @@ contains
         !     thus lessen the impact of output points on the code.
 
         dt = tout - t
-        if (abs(dt) >= 2.0e0*abs(h)) goto 200
+        if (abs(dt) >= 2.0_rk*abs(h)) goto 200
         if (abs(dt) > abs(h)) goto 150
 
         !     the next successful step will complete the integration to the
@@ -444,7 +442,7 @@ contains
         h = dt
         goto 200
 
-150     h = 0.5e0*dt
+150     h = 0.5_rk*dt
 
         !     core integrator for taking a single step
 
@@ -488,22 +486,22 @@ contains
         !     measured with respect to the average of the magnitudes of the
         !     solution at the beginning and end of the step.
 
-        eeoet = 0.0e0
+        eeoet = 0.0_rk
         do k = 1, neqn
             et = abs(y(k)) + abs(f1(k)) + ae
-            if (et > 0.0e0) goto 240
+            if (et > 0.0_rk) goto 240
 
             !       inappropriate error tolerance
             iflag = 5
             return
 
-240         ee = abs((-2090.0e0*yp(k) + (21970.0e0*f3(k) - 15048.0e0*f4(k))) + (22528.0e0*f2(k) - 27360.0e0*f5(k)))
+240         ee = abs((-2090.0_rk*yp(k) + (21970.0_rk*f3(k) - 15048.0_rk*f4(k))) + (22528.0_rk*f2(k) - 27360.0_rk*f5(k)))
             eeoet = max(eeoet, ee/et)
         end do
 
-        esttol = abs(h)*eeoet*scale/752400.0e0
+        esttol = abs(h)*eeoet*scale/752400.0_rk
 
-        if (esttol <= 1.0e0) goto 260
+        if (esttol <= 1.0_rk) goto 260
 
         !     unsuccessful step
         !                       reduce the stepsize , try again
@@ -511,8 +509,8 @@ contains
 
         hfaild = .true.
         output = .false.
-        s = 0.1e0
-        if (esttol < 59049.0e0) s = 0.9e0/esttol**0.2e0
+        s = 0.1_rk
+        if (esttol < 59049.0_rk) s = 0.9_rk/esttol**0.2_rk
         h = s*h
         if (abs(h) > hmin) goto 200
 
@@ -538,9 +536,9 @@ contains
         !                       if step failure has just occurred, next
         !                          stepsize is not allowed to increase
 
-        s = 5.0e0
-        if (esttol > 1.889568e-4) s = 0.9e0/esttol**0.2e0
-        if (hfaild) s = min(s, 1.0e0)
+        s = 5.0_rk
+        if (esttol > 1.889568e-4_rk) s = 0.9_rk/esttol**0.2_rk
+        if (hfaild) s = min(s, 1.0_rk)
         h = sign(max(s*abs(h), hmin), h)
 
         !     end of core integrator
@@ -587,41 +585,43 @@ contains
         real(rk) ch
         integer k
 
-        ch = h/4.0e0
+        ch = h/4.0_rk
         do k = 1, neqn
             f5(k) = y(k) + ch*yp(k)
         end do
         call f(t + ch, f5, f1)
 
-        ch = 3.0e0*h/32.0e0
+        ch = 3.0_rk*h/32.0_rk
         do k = 1, neqn
-            f5(k) = y(k) + ch*(yp(k) + 3.0e0*f1(k))
+            f5(k) = y(k) + ch*(yp(k) + 3.0_rk*f1(k))
         end do
-        call f(t + 3.0e0*h/8.0e0, f5, f2)
+        call f(t + 3.0_rk*h/8.0_rk, f5, f2)
 
-        ch = h/2197.0e0
+        ch = h/2197.0_rk
         do k = 1, neqn
-            f5(k) = y(k) + ch*(1932.0e0*yp(k) + (7296.0e0*f2(k) - 7200.0e0*f1(k)))
+            f5(k) = y(k) + ch*(1932.0_rk*yp(k) + (7296.0_rk*f2(k) - 7200.0_rk*f1(k)))
         end do
-        call f(t + 12.0e0*h/13.0e0, f5, f3)
+        call f(t + 12.0_rk*h/13.0_rk, f5, f3)
 
-        ch = h/4104.0e0
+        ch = h/4104.0_rk
         do k = 1, neqn
-            f5(k) = y(k) + ch*((8341.0e0*yp(k) - 845.0e0*f3(k)) + (29440.0e0*f2(k) - 32832.0e0*f1(k)))
+            f5(k) = y(k) + ch*((8341.0_rk*yp(k) - 845.0_rk*f3(k)) + (29440.0_rk*f2(k) - 32832.0_rk*f1(k)))
         end do
         call f(t + h, f5, f4)
 
-        ch = h/20520.0e0
+        ch = h/20520.0_rk
         do k = 1, neqn
-            f1(k) = y(k) + ch*((-6080.0e0*yp(k) + (9295.0e0*f3(k) - 5643.0e0*f4(k))) + (41040.0e0*f1(k) - 28352.0e0*f2(k)))
+            f1(k) = y(k) + ch*((-6080.0_rk*yp(k) + (9295.0_rk*f3(k) - 5643.0_rk*f4(k))) &
+                               + (41040.0_rk*f1(k) - 28352.0_rk*f2(k)))
         end do
-        call f(t + h/2.0e0, f1, f5)
+        call f(t + h/2.0_rk, f1, f5)
 
         !> compute approximate solution at t+h
 
-        ch = h/7618050.0e0
+        ch = h/7618050.0_rk
         do k = 1, neqn
-            s(k) = y(k) + ch*((902880.0e0*yp(k) + (3855735.0e0*f3(k) - 1371249.0e0*f4(k))) + (3953664.0e0*f2(k) + 277020.0e0*f5(k)))
+            s(k) = y(k) + ch*((902880.0_rk*yp(k) + (3855735.0_rk*f3(k) - 1371249.0_rk*f4(k))) &
+                              + (3953664.0_rk*f2(k) + 277020.0_rk*f5(k)))
         end do
 
         return
