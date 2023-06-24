@@ -1,24 +1,18 @@
 # RKF45
 
+![RKF45](https://img.shields.io/badge/RKF45-v0.2.0-blueviolet)
+![Language](https://img.shields.io/badge/-Fortran-734f96?logo=fortran&logoColor=white)
+[![license](https://img.shields.io/badge/License-MIT-pink)](LICENSE)
+
 `rkf45` is based on Fehlberg fourth-fifth order Runge-Kutta method.
 
-## Get Started
+## Usage
 
-### Dependencies
+Only FPM is supported, other build systems can copy source files (`./src/rkf45.F90`) directly,
+and `ifort` and `gfortran` compilers are tested.
 
-- Git
-- [fortran-lang/fpm](https://github.com/fortran-lang/fpm)
+To use `rkf45` within your `fpm` project, add the following lines to your `fpm.toml` file:
 
-### Build with [fortran-lang/fpm](https://github.com/fortran-lang/fpm)
-
-Fortran Package Manager (fpm) is a package manager and build system for Fortran.  
-You can build `rkf45` using provided `fpm.toml`:
-
-```sh
-fpm build --profile release
-```
-
-To use `rkf45` within your `fpm` project, add the following to your `fpm.toml` file:
 
 ```toml
 [dependencies]
@@ -27,23 +21,26 @@ rkf45 = { git="https://github.com/zoziha/rkf45" }
 
 ### Example
 
+```sh
+> fpm run --example --all  # run the examples
+```
+
 ```fortran
-!> Test rkf45 demo1,
-!> solve a Bernoulli differential equation using rkf45:
-!> yp = y - 2*x/y
-program rkf45_demo1
+!> Solve a Bernoulli differential equation using rkf45:
+!> y' = y - 2*x/y
+program example_rkf45
 
     use rkf45_module, only: rkf45, rk
 
     integer, parameter :: neqn = 1
-    real(rk) :: t = 0.0, t_out = 0.0, y(neqn)
+    real(rk) :: t = 0.0_rk, t_out = 0.0_rk, y(neqn)
     real(rk) :: relerr = epsilon(1.0), abserr = epsilon(1.0)
     integer :: flag = 1
     integer :: iwork(5), i, n_step = 5
     real(rk) :: work(3 + 6*neqn)
-    real(rk) :: t_start = 0.0, t_end = 1.0
+    real(rk) :: t_start = 0.0_rk, t_end = 1.0_rk
 
-    print "(A/)", "rkf45 demo1: solve a Bernoulli differential equation, yp = y - 2*x/y"
+    print "(A/)", "rkf45: solve a Bernoulli differential equation, y' = y - 2*x/y"
     print "(A6, *(A18))", "T", "Y", "Y_Exact", "Error"
 
     y = 1.0
@@ -77,7 +74,15 @@ contains
 
     end function fx
 
-end program rkf45_demo1
+end program example_rkf45
+!> rkf45: solve a Bernoulli differential equation, y' = y - 2*x/y
+!> 
+!>      T                 Y           Y_Exact             Error
+!>   0.20  1.1832159758E+00  1.1832159758E+00  0.0000000000E+00
+!>   0.40  1.3416407108E+00  1.3416407108E+00  0.0000000000E+00
+!>   0.60  1.4832396507E+00  1.4832397699E+00  1.1920928955E-07
+!>   0.80  1.6124514341E+00  1.6124515533E+00  1.1920928955E-07
+!>   1.00  1.7320506573E+00  1.7320507765E+00  1.1920928955E-07
 ```
 
 ## Links
@@ -86,3 +91,4 @@ end program rkf45_demo1
 - [John Burkardt/rkf45(Fixed Format)](https://people.math.sc.edu/Burkardt/f77_src/rkf45/rkf45.html)
 - [John Burkardt/rkf45(Free Format)](https://people.math.sc.edu/Burkardt/f_src/rkf45/rkf45.html)
 - [jacobwilliams/rksuite](https://github.com/jacobwilliams/rksuite)
+- [jacobwilliams/runge-kutta-fortran](https://github.com/jacobwilliams/runge-kutta-fortran)

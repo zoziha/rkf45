@@ -12,7 +12,7 @@ program tester
     stat = 0
 
     testsuites = [ &
-                 new_testsuite("test_rkf45", collect_rkf45) &
+                 new_testsuite("rkf45", collect_rkf45) &
                  ]
 
     do is = 1, size(testsuites)

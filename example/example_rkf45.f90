@@ -1,7 +1,6 @@
-!> Test rkf45 demo1,
-!> solve a Bernoulli differential equation using rkf45:
+!> Solve a Bernoulli differential equation using rkf45:
 !> y' = y - 2*x/y
-program rkf45_demo1
+program example_rkf45
 
     use rkf45_module, only: rkf45, rk
 
@@ -13,7 +12,7 @@ program rkf45_demo1
     real(rk) :: work(3 + 6*neqn)
     real(rk) :: t_start = 0.0_rk, t_end = 1.0_rk
 
-    print "(A/)", "rkf45 demo1: solve a Bernoulli differential equation, y' = y - 2*x/y"
+    print "(A/)", "rkf45: solve a Bernoulli differential equation, y' = y - 2*x/y"
     print "(A6, *(A18))", "T", "Y", "Y_Exact", "Error"
 
     y = 1.0
@@ -47,4 +46,12 @@ contains
 
     end function fx
 
-end program rkf45_demo1
+end program example_rkf45
+!> rkf45: solve a Bernoulli differential equation, y' = y - 2*x/y
+!> 
+!>      T                 Y           Y_Exact             Error
+!>   0.20  1.1832159758E+00  1.1832159758E+00  0.0000000000E+00
+!>   0.40  1.3416407108E+00  1.3416407108E+00  0.0000000000E+00
+!>   0.60  1.4832396507E+00  1.4832397699E+00  1.1920928955E-07
+!>   0.80  1.6124514341E+00  1.6124515533E+00  1.1920928955E-07
+!>   1.00  1.7320506573E+00  1.7320507765E+00  1.1920928955E-07

@@ -1,10 +1,15 @@
+!> Fehlberg 4~5th order Runge-Kutta method.
 module rkf45_module
 
-    use rkf45_kinds, only: rk
+#ifdef REAL64
+    use, intrinsic :: iso_fortran_env, only: rk => real64
+#else
+    use, intrinsic :: iso_fortran_env, only: rk => real32
+#endif
     implicit none
     private
 
-    public :: rkf45, rk
+    public :: rkf45, srkf45, rk
 
     abstract interface
 
@@ -19,6 +24,31 @@ module rkf45_module
     end interface
 
 contains
+
+    !> Simplified interface to `rkf45`.
+    subroutine srkf45(f, neqn, y, t, dt, nstep, relerr, abserr, iwork, work, istat)
+        procedure(fcn) :: f
+        real(rk), intent(inout) :: y(neqn)
+        real(rk), intent(inout) :: t
+        integer, intent(in) :: nstep
+        real(rk), intent(in) :: dt
+        integer, intent(in) :: neqn
+        real(rk), intent(inout) :: relerr
+        real(rk), intent(in) :: abserr
+        integer, intent(inout) :: istat
+        integer, intent(inout) :: iwork(5)
+        real(rk), intent(inout) :: work(*)
+        real(rk) :: t0
+        integer :: i
+
+        do i = 1, nstep
+            t0 = t + dt*(i - 1)
+            call rkf45(f, neqn, y, t0, t0 + dt, relerr, abserr, istat, work, iwork)
+            if (istat /= 2) exit
+        end do
+        t = t0
+
+    end subroutine srkf45
 
     !> rkf45 is primarily designed to solve non-stiff and mildly stiff
     !> differential equations when derivative evaluations are inexpensive.

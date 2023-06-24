@@ -1,11 +1,11 @@
 name = "rkf45"
-version = "VERSION"
+version = "0.2.0"
 homepage = "http://www.netlib.org/ode/rkf45.f"
 license = "MIT"
 description = "Fehlberg fourth-fifth order Runge-Kutta method"
 keywords = ["ODE", "Runge-Kutta", "Fehlberg", "fourth-fifth order"]
 maintainer = "rkf45 contributors"
-categories = "solver"
+categories = ["solver", "ODE45", "Runge-Kutta"]
 
 [dev-dependencies]
 test-drive = { git="https://github.com/fortran-lang/test-drive" }
